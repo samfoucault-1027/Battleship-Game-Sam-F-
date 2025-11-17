@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sam F Battleship - Naval Warfare</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="ocean-background">
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
+        <div class="wave wave3"></div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="header-left">
+                <div class="tactical-badge">NAVAL OPS</div>
+                <h1>TACTICAL BATTLESHIP</h1>
+            </div>
+            <div class="header-controls">
+                <button id="mute-toggle" class="icon-button" title="Toggle Sound">
+                    <span class="btn-text">AUDIO</span>
+                </button>
+                <button id="high-contrast-toggle" class="icon-button" title="High Contrast Mode">
+                    <span class="btn-text">DISPLAY</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Game Info Panel -->
+        <div class="game-info glass-panel">
+            <div class="turn-indicator">
+                <span id="turn-text">Setup Phase</span>
+                <div class="pulse-dot"></div>
+            </div>
+            <div id="message" class="message-display">Place your ships! Click on a ship to select it, then click on the board to place it.</div>
+            
+            <!-- Stats Panel -->
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <span class="stat-label">Shots Fired</span>
+                    <span id="shots-fired" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Accuracy</span>
+                    <span id="accuracy" class="stat-value">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Enemy Ships</span>
+                    <span id="enemy-ships" class="stat-value">5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Your Ships</span>
+                    <span id="player-ships" class="stat-value">5</span>
+                </div>
+            </div>
+
+            <!-- Opponent Selector -->
+            <div class="difficulty-selector" id="difficulty-selector">
+                <label>Choose Your Opponent:</label>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn active" data-difficulty="medium" data-persona="hannah">🎯 Hannah</button>
+                    <button class="difficulty-btn" data-difficulty="medium" data-persona="sebastian">⚓ Sebastian</button>
+                    <button class="difficulty-btn" data-difficulty="medium" data-persona="austin">🎮 Austin</button>
+                    <button class="difficulty-btn scott-mode" data-difficulty="scott" data-persona="scott">👑 SCOTT 👑</button>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button id="start-game" class="btn btn-primary" disabled>COMMENCE OPERATION</button>
+                <button id="reset-game" class="btn btn-secondary">RESET MISSION</button>
+            </div>
+        </div>
+        
+        <!-- Game Boards -->
+        <div class="game-boards">
+            <!-- Player Board with Ship Selection -->
+            <div class="player-board-section">
+                <div class="board-container glass-panel">
+                    <h3><span class="board-label">ALLIED FLEET</span></h3>
+                    <div class="board-wrapper">
+                        <div class="board-coordinates board-coordinates-top">
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                            <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                        </div>
+                        <div class="board-with-coords">
+                            <div class="board-coordinates board-coordinates-left">
+                                <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+                                <span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
+                            </div>
+                            <div id="player-board" class="board"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ship Selection Panel -->
+                <div class="ship-selection glass-panel" id="ship-selection-panel">
+            <h3><span class="board-label">FLEET DEPLOYMENT</span></h3>
+            <div id="ship-options">
+                <div class="ship-option" data-ship="carrier" data-size="5">
+                    <span class="ship-icon">CVN</span>
+                    <div class="ship-info">
+                        <span class="ship-name">Carrier</span>
+                        <span class="ship-size">5 cells</span>
+                    </div>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship-option" data-ship="battleship" data-size="4">
+                    <span class="ship-icon">BB</span>
+                    <div class="ship-info">
+                        <span class="ship-name">Battleship</span>
+                        <span class="ship-size">4 cells</span>
+                    </div>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship-option" data-ship="cruiser" data-size="3">
+                    <span class="ship-icon">CA</span>
+                    <div class="ship-info">
+                        <span class="ship-name">Cruiser</span>
+                        <span class="ship-size">3 cells</span>
+                    </div>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship-option" data-ship="submarine" data-size="3">
+                    <span class="ship-icon">SSN</span>
+                    <div class="ship-info">
+                        <span class="ship-name">Submarine</span>
+                        <span class="ship-size">3 cells</span>
+                    </div>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship-option" data-ship="destroyer" data-size="2">
+                    <span class="ship-icon">DD</span>
+                    <div class="ship-info">
+                        <span class="ship-name">Destroyer</span>
+                        <span class="ship-size">2 cells</span>
+                    </div>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="rotation-controls">
+                <button id="rotate-ship" class="btn btn-secondary">ROTATE (R)</button>
+                <p>Orientation: <span id="current-orientation" class="orientation-badge">Horizontal</span></p>
+            </div>
+            <div class="devin-random-container">
+                <button id="devin-random" class="btn-devin">
+                    <span class="otter-emoji">🦦</span>
+                    <span class="btn-devin-text">Devin's Random Deploy!</span>
+                </button>
+                <p class="devin-subtitle">Let the otter do the work!</p>
+            </div>
+                </div>
+            </div>
+            
+            <!-- Computer Board -->
+            <div class="board-container glass-panel">
+                <h3><span class="board-label">HOSTILE TERRITORY</span></h3>
+                <div class="board-wrapper">
+                    <div class="board-coordinates board-coordinates-top">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                    </div>
+                    <div class="board-with-coords">
+                        <div class="board-coordinates board-coordinates-left">
+                            <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+                            <span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
+                        </div>
+                        <div id="computer-board" class="board">
+                            <div class="radar-sweep-overlay"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victory/Defeat Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <div id="modal-icon" class="modal-icon"></div>
+            <h2 id="modal-title">Victory!</h2>
+            <p id="modal-message">Congratulations! You've defeated the enemy fleet!</p>
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <span class="modal-stat-label">Total Shots</span>
+                    <span id="modal-shots" class="modal-stat-value">0</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="modal-stat-label">Accuracy</span>
+                    <span id="modal-accuracy" class="modal-stat-value">0%</span>
+                </div>
+            </div>
+            <button id="modal-close" class="btn btn-primary">Play Again</button>
+        </div>
+        <div class="confetti-container" id="confetti-container"></div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="radar">
+                <div class="radar-sweep"></div>
+                <div class="radar-dot"></div>
+                <div class="radar-blip" style="top: 30%; left: 60%;"></div>
+                <div class="radar-blip" style="top: 70%; left: 40%; animation-delay: 0.3s;"></div>
+                <div class="radar-blip" style="top: 50%; left: 75%; animation-delay: 0.6s;"></div>
+                <div class="radar-blip" style="top: 25%; left: 30%; animation-delay: 0.9s;"></div>
+                <div class="radar-blip" style="top: 65%; left: 70%; animation-delay: 1.2s;"></div>
+            </div>
+            <p>Enemy analyzing...</p>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

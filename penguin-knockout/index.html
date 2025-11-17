@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐧 Penguin Knockout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 90vw;
+            max-width: 800px;
+            height: 80vh;
+            max-height: 600px;
+        }
+
+        canvas {
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #FFFFFF 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            cursor: crosshair;
+            display: block;
+        }
+
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+        }
+
+        .player-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            min-width: 150px;
+        }
+
+        .player-info.active {
+            background: rgba(255, 215, 0, 0.95);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .player-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .penguins-left {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        #menu-screen, #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            border-radius: 20px;
+            z-index: 1000;
+        }
+
+        #menu-screen.hidden, #game-over-screen.hidden {
+            display: none;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .player-setup {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+            width: 300px;
+        }
+
+        .player-input {
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-align: center;
+            pointer-events: none;
+            font-size: 1.1em;
+        }
+
+        #winner-text {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #FFD700;
+        }
+
+        .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui-overlay">
+            <div id="player1-info" class="player-info active">
+                <div class="player-name">Player 1</div>
+                <div class="penguins-left">🐧 x 3</div>
+            </div>
+            <div id="player2-info" class="player-info">
+                <div class="player-name">Player 2</div>
+                <div class="penguins-left">🐧 x 3</div>
+            </div>
+        </div>
+
+        <div id="instructions">
+            <strong>Drag</strong> from your penguin to aim and set power, then <strong>release</strong> to throw!
+        </div>
+
+        <!-- Menu Screen -->
+        <div id="menu-screen">
+            <div class="emoji">🐧</div>
+            <h1>PENGUIN KNOCKOUT</h1>
+            <p class="menu-subtitle">Throw penguins, knock 'em off!</p>
+            
+            <div class="player-setup">
+                <input type="text" class="player-input" id="player1-name" placeholder="Player 1 Name" value="Player 1">
+                <input type="text" class="player-input" id="player2-name" placeholder="Player 2 Name" value="Player 2">
+            </div>
+            
+            <button class="btn-primary" onclick="startGame()">Start Game</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="hidden">
+            <div class="emoji">🏆</div>
+            <div id="winner-text">Player 1 Wins!</div>
+            <button class="btn-primary" onclick="restartGame()">Play Again</button>
+            <button class="btn-secondary" onclick="backToMenu()">Main Menu</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        function resizeCanvas() {
+            const container = document.getElementById('game-container');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game state
+        let gameState = {
+            players: [],
+            currentPlayerIndex: 0,
+            penguins: [],
+            platform: null,
+            dragging: false,
+            dragStart: null,
+            selectedPenguin: null,
+            gamePhase: 'menu' // menu, playing, gameover
+        };
+
+        // Physics constants
+        const GRAVITY = 0.3;
+        const FRICTION = 0.98;
+        const BOUNCE = 0.6;
+
+        class Platform {
+            constructor() {
+                this.width = canvas.width * 0.7;
+                this.height = 40;
+                this.x = (canvas.width - this.width) / 2;
+                this.y = canvas.height * 0.6;
+            }
+
+            draw() {
+                // Ice platform
+                ctx.fillStyle = '#B0E0E6';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Ice shine
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(this.x, this.y, this.width, this.height / 2);
+                
+                // Border
+                ctx.strokeStyle = '#4682B4';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+            }
+
+            isOnPlatform(x, y) {
+                return x > this.x && x < this.x + this.width && 
+                       y > this.y - 5 && y < this.y + this.height;
+            }
+        }
+
+        class Penguin {
+            constructor(x, y, playerIndex, id) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 20;
+                this.playerIndex = playerIndex;
+                this.id = id;
+                this.alive = true;
+                this.color = playerIndex === 0 ? '#FF6B6B' : '#4ECDC4';
+            }
+
+            update() {
+                if (!this.alive) return;
+
+                // Apply gravity
+                this.vy += GRAVITY;
+
+                // Apply friction
+                this.vx *= FRICTION;
+                this.vy *= FRICTION;
+
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Platform collision
+                if (gameState.platform.isOnPlatform(this.x, this.y + this.radius)) {
+                    this.y = gameState.platform.y - this.radius;
+                    this.vy *= -BOUNCE;
+                    if (Math.abs(this.vy) < 0.5) this.vy = 0;
+                }
+
+                // Check if fallen off
+                if (this.y > canvas.height + 50) {
+                    this.alive = false;
+                }
+
+                // Penguin collisions
+                gameState.penguins.forEach(other => {
+                    if (other !== this && other.alive) {
+                        const dx = other.x - this.x;
+                        const dy = other.y - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < this.radius + other.radius) {
+                            // Collision response
+                            const angle = Math.atan2(dy, dx);
+                            const targetX = this.x + Math.cos(angle) * (this.radius + other.radius);
+                            const targetY = this.y + Math.sin(angle) * (this.radius + other.radius);
+                            
+                            const ax = (targetX - other.x) * 0.5;
+                            const ay = (targetY - other.y) * 0.5;
+                            
+                            this.vx -= ax;
+                            this.vy -= ay;
+                            other.vx += ax;
+                            other.vy += ay;
+                        }
+                    }
+                });
+            }
+
+            draw() {
+                if (!this.alive) return;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y + this.radius + 5, this.radius * 0.8, this.radius * 0.3, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Penguin body
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Belly
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y + 5, this.radius * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Eyes
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(this.x - 7, this.y - 5, 3, 0, Math.PI * 2);
+                ctx.arc(this.x + 7, this.y - 5, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Beak
+                ctx.fillStyle = '#FFA500';
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - 5, this.y + 5);
+                ctx.lineTo(this.x + 5, this.y + 5);
+                ctx.closePath();
+                ctx.fill();
+
+                // Player indicator
+                ctx.fillStyle = this.color;
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`P${this.playerIndex + 1}`, this.x, this.y - this.radius - 5);
+            }
+
+            canBeSelected(playerIndex) {
+                return this.alive && this.playerIndex === playerIndex && 
+                       Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1;
+            }
+        }
+
+        function initGame() {
+            gameState.platform = new Platform();
+            
+            // Create penguins for each player
+            const spacing = gameState.platform.width / 4;
+            gameState.penguins = [];
+            
+            // Player 1 penguins (left side)
+            for (let i = 0; i < 3; i++) {
+                const penguin = new Penguin(
+                    gameState.platform.x + spacing * 0.5 + i * 35,
+                    gameState.platform.y - 20,
+                    0,
+                    i
+                );
+                penguin.vy = 0; // Stop initial fall
+                gameState.penguins.push(penguin);
+            }
+            
+            // Player 2 penguins (right side)
+            for (let i = 0; i < 3; i++) {
+                const penguin = new Penguin(
+                    gameState.platform.x + gameState.platform.width - spacing * 0.5 - i * 35,
+                    gameState.platform.y - 20,
+                    1,
+                    i + 3
+                );
+                penguin.vy = 0; // Stop initial fall
+                gameState.penguins.push(penguin);
+            }
+        }
+
+        function startGame() {
+            const player1Name = document.getElementById('player1-name').value || 'Player 1';
+            const player2Name = document.getElementById('player2-name').value || 'Player 2';
+            
+            gameState.players = [
+                { name: player1Name, penguins: 3 },
+                { name: player2Name, penguins: 3 }
+            ];
+            
+            gameState.currentPlayerIndex = 0;
+            gameState.gamePhase = 'playing';
+            
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('player1-info').querySelector('.player-name').textContent = player1Name;
+            document.getElementById('player2-info').querySelector('.player-name').textContent = player2Name;
+            
+            initGame();
+            gameLoop();
+        }
+
+        function restartGame() {
+            document.getElementById('game-over-screen').classList.add('hidden');
+            startGame();
+        }
+
+        function backToMenu() {
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('menu-screen').classList.remove('hidden');
+            gameState.gamePhase = 'menu';
+        }
+
+        // Mouse/Touch handling
+        canvas.addEventListener('mousedown', handleDragStart);
+        canvas.addEventListener('mousemove', handleDragMove);
+        canvas.addEventListener('mouseup', handleDragEnd);
+        canvas.addEventListener('touchstart', (e) => handleDragStart(e.touches[0]));
+        canvas.addEventListener('touchmove', (e) => handleDragMove(e.touches[0]));
+        canvas.addEventListener('touchend', handleDragEnd);
+
+        function handleDragStart(e) {
+            if (gameState.gamePhase !== 'playing') return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Find selectable penguin
+            const currentPlayer = gameState.currentPlayerIndex;
+            for (let penguin of gameState.penguins) {
+                if (penguin.canBeSelected(currentPlayer)) {
+                    const dx = x - penguin.x;
+                    const dy = y - penguin.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < penguin.radius) {
+                        gameState.dragging = true;
+                        gameState.dragStart = { x, y };
+                        gameState.selectedPenguin = penguin;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function handleDragMove(e) {
+            if (!gameState.dragging) return;
+            e.preventDefault();
+        }
+
+        function handleDragEnd(e) {
+            if (!gameState.dragging || !gameState.selectedPenguin) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.changedTouches[0].clientX) - rect.left;
+            const y = (e.clientY || e.changedTouches[0].clientY) - rect.top;
+            
+            const dx = gameState.dragStart.x - x;
+            const dy = gameState.dragStart.y - y;
+            const power = Math.min(Math.sqrt(dx * dx + dy * dy) / 10, 15);
+            
+            gameState.selectedPenguin.vx = dx * power * 0.1;
+            gameState.selectedPenguin.vy = dy * power * 0.1;
+            
+            gameState.dragging = false;
+            gameState.dragStart = null;
+            gameState.selectedPenguin = null;
+            
+            // Switch turns after a delay
+            setTimeout(() => {
+                if (gameState.gamePhase === 'playing') {
+                    gameState.currentPlayerIndex = 1 - gameState.currentPlayerIndex;
+                    updateUI();
+                }
+            }, 2000);
+        }
+
+        function updateUI() {
+            const player1Alive = gameState.penguins.filter(p => p.playerIndex === 0 && p.alive).length;
+            const player2Alive = gameState.penguins.filter(p => p.playerIndex === 1 && p.alive).length;
+            
+            document.getElementById('player1-info').querySelector('.penguins-left').textContent = `🐧 x ${player1Alive}`;
+            document.getElementById('player2-info').querySelector('.penguins-left').textContent = `🐧 x ${player2Alive}`;
+            
+            // Update active player
+            if (gameState.currentPlayerIndex === 0) {
+                document.getElementById('player1-info').classList.add('active');
+                document.getElementById('player2-info').classList.remove('active');
+            } else {
+                document.getElementById('player1-info').classList.remove('active');
+                document.getElementById('player2-info').classList.add('active');
+            }
+            
+            // Check for winner
+            if (player1Alive === 0) {
+                endGame(1);
+            } else if (player2Alive === 0) {
+                endGame(0);
+            }
+        }
+
+        function endGame(winnerIndex) {
+            gameState.gamePhase = 'gameover';
+            const winnerName = gameState.players[winnerIndex].name;
+            document.getElementById('winner-text').textContent = `${winnerName} Wins!`;
+            document.getElementById('game-over-screen').classList.remove('hidden');
+        }
+
+        function drawAimLine() {
+            if (!gameState.dragging || !gameState.selectedPenguin) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(gameState.selectedPenguin.x, gameState.selectedPenguin.y);
+            ctx.lineTo(mouseX, mouseY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function gameLoop() {
+            if (gameState.gamePhase !== 'playing') return;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw water
+            ctx.fillStyle = '#4682B4';
+            ctx.fillRect(0, canvas.height * 0.7, canvas.width, canvas.height * 0.3);
+            
+            // Draw platform
+            gameState.platform.draw();
+            
+            // Update and draw penguins
+            gameState.penguins.forEach(penguin => {
+                penguin.update();
+                penguin.draw();
+            });
+            
+            // Draw aim line
+            drawAimLine();
+            
+            // Update UI
+            updateUI();
+            
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>

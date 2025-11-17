@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏀 Knockout - Multiplayer Basketball</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Main Menu -->
+        <div id="menu-screen" class="screen active">
+            <div class="menu-content">
+                <h1 class="game-title">🏀 KNOCKOUT</h1>
+                <p class="subtitle">Multiplayer Basketball Showdown</p>
+                
+                <div class="player-name-input">
+                    <input type="text" id="player-name" placeholder="Enter your name" maxlength="15" value="Player">
+                </div>
+                
+                <div class="menu-buttons">
+                    <button class="btn btn-primary" id="local-game-btn">
+                        <span class="btn-icon">👥</span>
+                        Local Multiplayer (Same Screen)
+                    </button>
+                    <button class="btn btn-secondary" id="create-game-btn">
+                        <span class="btn-icon">🎮</span>
+                        Online Game
+                    </button>
+                    <button class="btn btn-secondary" id="join-game-btn">
+                        <span class="btn-icon">🔗</span>
+                        Join Online Game
+                    </button>
+                </div>
+                
+                <div id="join-game-form" class="join-form hidden">
+                    <input type="text" id="game-code" placeholder="Enter Game Code" maxlength="6">
+                    <button class="btn btn-accent" id="join-submit-btn">Join</button>
+                    <button class="btn btn-text" id="cancel-join-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Local Setup Screen -->
+        <div id="local-setup-screen" class="screen">
+            <div class="lobby-content">
+                <h2>Local Multiplayer Setup</h2>
+                <p class="subtitle">Add 2-4 players</p>
+                
+                <div class="local-players-setup">
+                    <div class="player-input-row">
+                        <input type="text" class="local-player-input" placeholder="Player 1 Name" maxlength="15" value="Player 1">
+                    </div>
+                    <div class="player-input-row">
+                        <input type="text" class="local-player-input" placeholder="Player 2 Name" maxlength="15" value="Player 2">
+                    </div>
+                    <div class="player-input-row hidden">
+                        <input type="text" class="local-player-input" placeholder="Player 3 Name" maxlength="15" value="Player 3">
+                    </div>
+                    <div class="player-input-row hidden">
+                        <input type="text" class="local-player-input" placeholder="Player 4 Name" maxlength="15" value="Player 4">
+                    </div>
+                </div>
+                
+                <div class="lobby-actions">
+                    <button class="btn btn-accent" id="add-player-btn">
+                        ➕ Add Player
+                    </button>
+                    <button class="btn btn-primary" id="start-local-game-btn">
+                        Start Game
+                    </button>
+                    <button class="btn btn-secondary" id="back-to-menu-btn">
+                        Back to Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lobby Screen -->
+        <div id="lobby-screen" class="screen">
+            <div class="lobby-content">
+                <h2>Game Lobby</h2>
+                <div class="game-code-display">
+                    <span class="label">Game Code:</span>
+                    <span id="lobby-game-code" class="game-code">------</span>
+                    <button id="copy-code-btn" class="btn-icon-small" title="Copy code">📋</button>
+                </div>
+                
+                <div class="players-waiting">
+                    <h3>Players (<span id="player-count">0</span>/4)</h3>
+                    <div id="lobby-players" class="player-list"></div>
+                </div>
+                
+                <div class="lobby-actions">
+                    <button class="btn btn-primary" id="start-game-btn" disabled>
+                        Start Game
+                    </button>
+                    <button class="btn btn-secondary" id="leave-lobby-btn">
+                        Leave Lobby
+                    </button>
+                </div>
+                
+                <p class="lobby-info">Waiting for players... (2-4 players needed)</p>
+            </div>
+        </div>
+        
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="round-info">
+                    Round <span id="round-number">1</span>
+                </div>
+                <div class="spot-info">
+                    <span id="current-spot">Free Throw</span>
+                </div>
+            </div>
+            
+            <div class="game-area">
+                <!-- Basketball Court -->
+                <div class="court">
+                    <div class="court-lines">
+                        <div class="three-point-line"></div>
+                        <div class="key"></div>
+                        <div class="free-throw-circle"></div>
+                    </div>
+                    
+                    <div class="hoop">
+                        <div class="backboard"></div>
+                        <div class="rim">🏀</div>
+                        <div class="net"></div>
+                    </div>
+                    
+                    <div id="basketball" class="basketball">🏀</div>
+                    <div id="shot-indicator" class="shot-indicator"></div>
+                </div>
+                
+                <!-- Players Panel -->
+                <div class="players-panel">
+                    <h3>Players</h3>
+                    <div id="game-players" class="game-player-list"></div>
+                </div>
+            </div>
+            
+            <!-- Shooting Controls -->
+            <div id="shooting-controls" class="shooting-controls">
+                <div class="turn-indicator">
+                    <span id="current-turn-text">Waiting...</span>
+                </div>
+                
+                <div class="power-meter">
+                    <div class="power-label">Shot Power</div>
+                    <div class="power-bar">
+                        <div id="power-fill" class="power-fill"></div>
+                        <div id="power-marker" class="power-marker"></div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-shoot" id="shoot-btn" disabled>
+                    🏀 SHOOT
+                </button>
+            </div>
+            
+            <!-- Result Display -->
+            <div id="result-display" class="result-display hidden">
+                <div class="result-content">
+                    <div id="result-icon" class="result-icon"></div>
+                    <div id="result-text" class="result-text"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen">
+            <div class="gameover-content">
+                <div id="winner-icon" class="winner-icon">🏆</div>
+                <h2 id="winner-text">Winner!</h2>
+                <div id="final-standings" class="final-standings"></div>
+                <button class="btn btn-primary" id="new-game-btn">
+                    Play Again
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
