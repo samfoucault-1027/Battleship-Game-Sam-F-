@@ -41,7 +41,7 @@ body.high-contrast {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Consolas', 'Courier New', 'Monaco', 'Lucida Console', monospace;
 }
 
 body {
@@ -51,7 +51,8 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
-    font-family: 'Courier New', monospace;
+    font-family: 'Consolas', 'Courier New', 'Monaco', 'Lucida Console', monospace;
+    letter-spacing: 0.5px;
 }
 
 /* Scanline effect for retro gaming feel */
@@ -163,10 +164,11 @@ body::before {
         0 0 40px rgba(0, 255, 0, 0.5),
         0 0 60px rgba(0, 255, 0, 0.3);
     margin: 0;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 6px;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 8px;
     font-weight: 900;
     animation: title-glow 3s ease-in-out infinite;
+    text-transform: uppercase;
 }
 
 @keyframes title-glow {
@@ -185,9 +187,10 @@ body::before {
 }
 
 .board-label {
-    font-family: 'Courier New', monospace;
-    letter-spacing: 3px;
-    font-weight: bold;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 4px;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .header-controls {
@@ -204,9 +207,10 @@ body::before {
     cursor: pointer;
     transition: all 0.3s ease;
     color: var(--text-green);
-    font-family: 'Courier New', monospace;
-    letter-spacing: 1px;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 2px;
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 .icon-button:hover {
@@ -232,8 +236,11 @@ body::before {
     gap: 10px;
     margin-bottom: 15px;
     font-size: 1.3em;
-    font-weight: bold;
+    font-weight: 900;
     color: var(--gold-accent);
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 .pulse-dot {
@@ -255,6 +262,9 @@ body::before {
     min-height: 30px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.2);
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    font-weight: 700;
+    letter-spacing: 1px;
     border-radius: 8px;
 }
 
@@ -285,11 +295,15 @@ body::before {
     color: var(--foam-white);
     opacity: 0.8;
     margin-bottom: 5px;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .stat-value {
     font-size: 1.8em;
-    font-weight: bold;
+    font-weight: 900;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
     color: var(--gold-accent);
 }
 
@@ -318,6 +332,10 @@ body::before {
     color: var(--foam-white);
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .difficulty-btn:hover {
@@ -433,10 +451,13 @@ body::before {
     border: none;
     border-radius: 10px;
     font-size: 1.1em;
-    font-weight: bold;
+    font-weight: 900;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .btn-primary {
@@ -533,15 +554,17 @@ body::before {
 .game-boards {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 40px;
     margin: 30px 0;
+    align-items: flex-start;
 }
 
 .player-board-section {
     display: flex;
     gap: 20px;
     align-items: flex-start;
+    flex-shrink: 0;
 }
 
 .board-container {
@@ -551,6 +574,7 @@ body::before {
     box-shadow: 
         0 0 30px rgba(0, 255, 255, 0.2),
         inset 0 0 50px rgba(0, 255, 255, 0.05);
+    flex-shrink: 0;
 }
 
 /* Corner brackets for tactical feel */
@@ -737,8 +761,8 @@ body::before {
 }
 
 @keyframes radar-sweep-board {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
 }
 
 /* Targeting effect on hover for enemy board */
@@ -828,8 +852,14 @@ body::before {
 }
 
 .cell.hit::after {
-    content: '💥' !important;
-    font-size: 2em;
+    content: '✖' !important;
+    font-size: 2.5em;
+    font-weight: 900;
+    color: #ff0000;
+    text-shadow: 
+        0 0 10px #ff0000,
+        0 0 20px #ff4500,
+        0 0 30px #ff6347;
     animation: explosion-icon 0.6s ease-out;
     position: absolute;
     top: 0;
@@ -843,6 +873,20 @@ body::before {
     pointer-events: none;
 }
 
+.cell.hit::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(255, 69, 0, 0.6) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    animation: explosion-ring 0.6s ease-out;
+    z-index: 99;
+    pointer-events: none;
+}
+
 @keyframes explosion {
     0% { transform: scale(0.5); opacity: 0; }
     50% { transform: scale(1.3); box-shadow: 0 0 30px var(--hit-glow); }
@@ -853,6 +897,17 @@ body::before {
     0% { transform: scale(0) rotate(0deg); opacity: 0; }
     50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
     100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+@keyframes explosion-ring {
+    0% { 
+        transform: translate(-50%, -50%) scale(0); 
+        opacity: 0.8; 
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1); 
+        opacity: 0; 
+    }
 }
 
 @keyframes hit-pulse {
@@ -870,12 +925,39 @@ body::before {
     background: var(--miss-white);
     cursor: not-allowed;
     animation: splash 0.5s ease-out;
+    position: relative;
 }
 
 .cell.miss::after {
-    content: '💧';
-    font-size: 1.2em;
+    content: '○';
+    font-size: 2em;
+    font-weight: 300;
+    color: rgba(135, 206, 250, 0.8);
+    text-shadow: 
+        0 0 5px rgba(135, 206, 250, 0.6),
+        0 0 10px rgba(70, 130, 180, 0.4);
     animation: splash-icon 0.5s ease-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.cell.miss::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(135, 206, 250, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: water-ripple 0.8s ease-out;
+    z-index: 99;
+    pointer-events: none;
 }
 
 @keyframes splash {
@@ -885,8 +967,31 @@ body::before {
 }
 
 @keyframes splash-icon {
-    0% { transform: translateY(-10px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+    0% { 
+        transform: translate(-50%, -50%) scale(0); 
+        opacity: 0; 
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.3); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1); 
+        opacity: 0.8; 
+    }
+}
+
+@keyframes water-ripple {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.5); 
+        opacity: 0.8; 
+        border-width: 2px;
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1.8); 
+        opacity: 0;
+        border-width: 0px;
+    }
 }
 
 .cell.sunk {
@@ -1004,7 +1109,8 @@ body::before {
 
 .ship-selection {
     padding: 20px;
-    max-width: 350px;
+    width: 100%;
+    max-width: 400px;
     flex-shrink: 0;
 }
 
@@ -1018,21 +1124,22 @@ body::before {
 #ship-options {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     margin: 20px 0;
 }
 
 .ship-option {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px 20px;
+    gap: 12px;
+    padding: 12px 15px;
     background: rgba(0, 0, 0, 0.3);
     border: 2px solid var(--glass-border);
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     user-select: none;
+    min-height: 65px;
 }
 
 .ship-option:hover {
@@ -1042,48 +1149,82 @@ body::before {
 }
 
 .ship-icon {
-    font-size: 1.2em;
-    min-width: 50px;
+    font-size: 1em;
+    min-width: 45px;
+    width: 45px;
+    height: 45px;
     text-align: center;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    font-weight: 900;
     color: var(--text-green);
     background: var(--bg-black);
-    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 2px solid var(--grid-green-dim);
-    border-radius: 2px;
-    letter-spacing: 2px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
 }
 
 .ship-info {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-width: 80px;
+    gap: 2px;
 }
 
 .ship-name {
-    font-size: 1.2em;
-    font-weight: bold;
+    font-size: 1.1em;
+    font-weight: 900;
     color: var(--foam-white);
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
 .ship-size {
-    font-size: 0.9em;
+    font-size: 0.85em;
     color: var(--foam-white);
     opacity: 0.7;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
 .ship-visual {
     display: flex;
     gap: 3px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    align-items: center;
+    margin-left: auto;
+    min-width: fit-content;
 }
 
 .ship-cell {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     background: linear-gradient(135deg, var(--ship-gray) 0%, var(--ship-dark) 100%);
-    border-radius: 3px;
+    border-radius: 2px;
     border: 1px solid var(--glass-border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    position: relative;
+}
+
+.ship-cell::after {
+    content: '⛴️';
+    opacity: 0.5;
+    filter: grayscale(100%) brightness(1.2);
+    font-size: 8px;
 }
 
 .ship-option.placing {
@@ -1272,7 +1413,9 @@ body::before {
         0 0 40px rgba(0, 255, 255, 0.5),
         0 0 60px rgba(0, 255, 255, 0.3);
     font-weight: 900;
-    letter-spacing: 3px;
+    letter-spacing: 6px;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    text-transform: uppercase;
 }
 
 .modal-content p {
@@ -1297,6 +1440,9 @@ body::before {
     font-size: 0.9em;
     opacity: 0.8;
     margin-bottom: 5px;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .modal-stat-value {
@@ -1370,9 +1516,37 @@ body::before {
 }
 
 .loading-content p {
-    margin-top: 20px;
-    font-size: 1.3em;
-    color: var(--foam-white);
+    margin-top: 30px;
+    font-size: 1.8em;
+    color: #00ff00;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-family: 'Consolas', 'Courier New', 'Monaco', monospace;
+    text-shadow: 
+        0 0 10px rgba(0, 255, 0, 0.8),
+        0 0 20px rgba(0, 255, 0, 0.6),
+        0 0 30px rgba(0, 255, 0, 0.4),
+        0 0 40px rgba(0, 255, 0, 0.2);
+    animation: text-pulse 2s ease-in-out infinite;
+}
+
+@keyframes text-pulse {
+    0%, 100% {
+        text-shadow: 
+            0 0 10px rgba(0, 255, 0, 0.8),
+            0 0 20px rgba(0, 255, 0, 0.6),
+            0 0 30px rgba(0, 255, 0, 0.4);
+        opacity: 1;
+    }
+    50% {
+        text-shadow: 
+            0 0 20px rgba(0, 255, 0, 1),
+            0 0 30px rgba(0, 255, 0, 0.8),
+            0 0 40px rgba(0, 255, 0, 0.6),
+            0 0 60px rgba(0, 255, 0, 0.4);
+        opacity: 0.9;
+    }
 }
 
 .radar {
@@ -1412,9 +1586,9 @@ body::before {
 /* Sweeping radar line */
 .radar-sweep {
     position: absolute;
-    top: 50%;
+    bottom: 50%;
     left: 50%;
-    width: 4px;
+    width: 2px;
     height: 50%;
     background: linear-gradient(to top, rgba(0, 255, 0, 0.8), transparent);
     transform-origin: bottom center;
@@ -1463,8 +1637,8 @@ body::before {
 }
 
 @keyframes radar-sweep {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
 }
 
 @keyframes radar-ping {
@@ -1482,8 +1656,7 @@ body::before {
 
 @media (max-width: 1200px) {
     .game-boards {
-        flex-direction: column;
-        align-items: center;
+        gap: 20px;
     }
     
     .player-board-section {
